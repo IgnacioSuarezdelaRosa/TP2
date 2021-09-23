@@ -1,0 +1,61 @@
+---
+title: "tp2_github"
+author: "Ignacio Suarez de la Rosa"
+date: "22/9/2021"
+output: html_document
+---
+
+
+
+**Visualización de Datos**
+
+*1-Comenzaré cargando las librerías:*
+
+```{r}
+library(stringr) 
+library(rvest) 
+library(tidyverse) 
+```
+
+
+*2-Luego tomaré los datos de la página web de "Info Dólar"*
+
+```{r}
+url <- "https://www.infodolar.com/cotizacion-dolar-blue.aspx"
+```
+
+*3-Veamos la estructura de la tabla, a fin de obtener la información correspondiente al dólar informal*
+
+```{r}
+Valor_Moneda <- read_html(url) %>% 
+  html_nodes(xpath = '//*[(@id = "CompraVenta")]//*[contains(concat( " ", @class, " " ), concat( " ", "colCompraVenta", " " ))]') %>%
+  html_text() %>%
+  str_replace_all ("[^[:alnum:]]", "")
+```
+
+```{r}
+Nombres_Moneda <- read_html(url) %>%
+  html_nodes(xpath = '//*[(@id = "CompraVenta")]//*[contains(concat( " ", @class, " " ), concat( " ", "dolar-blue", " " )) and (((count(preceding-sibling::*) + 1) = 3) and parent::*)] | //*[(@id = "CompraVenta")]//*[contains(concat( " ", @class, " " ), concat( " ", "dolar-blue", " " )) and (((count(preceding-sibling::*) + 1) = 2) and parent::*)]') %>%
+  html_text2()
+```
+
+```{r}
+Tabla_unida <- tibble(Tipo_Dolar = Nombres_Moneda,
+  Valores_hoy= Valor_Moneda)
+```
+
+```{r}
+names(Tabla_unida)
+```
+
+```{r}
+summary(Tabla_unida)
+```
+
+```{r}
+str (Tabla_unida) 
+```
+
+
+
+
